@@ -1,0 +1,71 @@
+import React, { useEffect, useState } from "react";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
+import { Button, Stack, TextField } from "@mui/material";
+import { addPost } from "../../api/posts.api";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
+
+export default function AddPostsDialog({ open, handleClose, setRefresh, setIsPostAdded }) {
+  const [formData, setFormData] = useState({ title: "", body: "" });
+
+  const handleSubmit = () => {
+    addPost(formData);
+    setRefresh(true);
+    setIsPostAdded(true)
+    handleClose();
+  };
+  return (
+    <Modal
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={style}>
+        <Typography
+          id="modal-modal-title"
+          variant="h6"
+          component="h2"
+          className="text-center"
+        >
+          Add Post
+        </Typography>
+        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          <Stack spacing={2}>
+            <TextField
+              id="outlined-basic"
+              label="Enter post title"
+              variant="outlined"
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, title: e.target.value }))
+              }
+            />
+            <TextField
+              id="outlined-basic"
+              label="Enter post body"
+              variant="outlined"
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, body: e.target.value }))
+              }
+            />
+            <Button variant="contained" onClick={handleSubmit}>
+              Submit Post
+            </Button>
+          </Stack>
+        </Typography>
+      </Box>
+    </Modal>
+  );
+}
