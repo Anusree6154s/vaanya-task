@@ -6,7 +6,6 @@ const {
 } = require("../services/post.service");
 
 const addPost = async (req, res) => {
-    console.log(req.body)
   try {
     await addPostService(req.body);
     res.status(200).send({ message: "Post added successfully!" });

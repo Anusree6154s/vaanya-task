@@ -1,4 +1,4 @@
-import { backendURL } from "../utils/contants";
+import { backendURL } from "../utils/constants";
 
 export const addPost = async (formData) => {
   try {

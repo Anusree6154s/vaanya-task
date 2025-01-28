@@ -1,17 +1,14 @@
-import React, { useState, useEffect } from "react";
-import SideBar from "../SideBar/SideBar";
-import Navbar from "../Navbar/Navbar";
-import DriverList from "../DriverList/DriverList";
-import AddDriver from "../AddDriver/AddDriver";
-import MapView from "../MapView/MapView";
+import React, { useEffect, useState } from "react";
 // import CarControl from '../CarControl/CarControl';
-import { db } from "../Firebase/Firebase";
 import { collection, onSnapshot } from "firebase/firestore";
-import AdminLogin from "../AdminLogin/AdminLogin";
-import Posts from "../Posts/Posts";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AddPostsDialog from "../AddPostsDialog/AddPostsDialog";
-import { Box, Stack } from "@mui/material";
+import AdminLogin from "../AdminLogin/AdminLogin";
 import EditPostsDialog from "../EditPostsDialog/EditPostsDialog";
+import { db } from "../Firebase/Firebase";
+import HomePage from "../../Pages/HomePage";
+import PostPage from "../../Pages/PostPage";
+
 const Dashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedField, setSelectedField] = useState("Dashboard");
@@ -20,6 +17,7 @@ const Dashboard = () => {
   const [error, setError] = useState("");
   const [post, setPost] = useState({ title: "", body: "" });
   const [isPostAdded, setIsPostAdded] = useState(false);
+  const [pageName, setPageName] = useState("Blog Website");
 
   const [open, setOpen] = React.useState({ edit: false, add: false });
   const handleOpenAdd = () => setOpen((prev) => ({ ...prev, add: true }));
@@ -27,7 +25,6 @@ const Dashboard = () => {
   const handleCloseAdd = () => setOpen((prev) => ({ ...prev, add: false }));
   const handleCloseEdit = () => setOpen((prev) => ({ ...prev, edit: false }));
   const [refresh, setRefresh] = useState(false);
-
 
   // Fetch drivers from Firestore when the component mounts
   useEffect(() => {
@@ -62,46 +59,36 @@ const Dashboard = () => {
   // Render the dashboard based on the user's role (admin or user)
   const renderDashboard = () => (
     <div>
-      <Navbar toggleSidebar={toggleSidebar} handleOpen={handleOpenAdd} />
-      <Box sx={{ display: "flex", gap: 2 }}>
-        <SideBar
-          isSidebarOpen={isSidebarOpen}
-          onFieldClick={handleFieldClick}
-          setIsSidebarOpen={setIsSidebarOpen}
-          sx={{ flex: 0.5 }}
-        />
-        <Posts
-          refresh={refresh}
-          sx={{ flex: 1.5 }}
-          setRefresh={setRefresh}
-          handleOpen={handleOpenEdit}
-          setPost={setPost}
-          isPostAdded={isPostAdded}
-          setIsPostAdded={setIsPostAdded}
-        />
-      </Box>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <HomePage
+                toggleSidebar={toggleSidebar}
+                handleOpenAdd={handleOpenAdd}
+                pageName={pageName}
+                refresh={refresh}
+                setRefresh={setRefresh}
+                handleOpenEdit={handleOpenEdit}
+                setPost={setPost}
+                isPostAdded={isPostAdded}
+                setIsPostAdded={setIsPostAdded}
+              />
+            }
+          />
+          <Route
+            path="/post/:id"
+            element={
+              <PostPage
+                toggleSidebar={toggleSidebar}
+                handleOpenAdd={handleOpenAdd}
+              />
+            }
+          />
+        </Routes>
+      </BrowserRouter>
 
-      {/* <div
-        className={`sm:ml-[266px] mt-16 ${
-          isSidebarOpen ? "ml-[266px]" : "ml-0"
-        }`}
-      >
-        {role === "admin" ? (
-          // Admin sees the full dashboard
-          <>
-            {selectedField === 'Dashboard' && <MapView role={role} />}
-            {selectedField === 'Dashboard' && <MapView /> && <CarControl />}
-            {selectedField === "DriverList" && <DriverList drivers={drivers} />}
-            {selectedField === 'AddDriver' && <AddDriver setDrivers={setDrivers} />}
-          </>
-        ) : (
-          // Regular user sees only 'Add Driver'
-          <>
-            {selectedField === 'Dashboard' && <MapView role={role} />}
-            {selectedField === 'AddDriver' && <AddDriver setDrivers={setDrivers} />}
-          </>
-        )}
-      </div> */}
       <AddPostsDialog
         handleClose={handleCloseAdd}
         open={open.add}

@@ -2,7 +2,13 @@ import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import { Button, Stack, TextField } from "@mui/material";
+import {
+  Button,
+  FormControl,
+  FormLabel,
+  Stack,
+  TextField,
+} from "@mui/material";
 import { addPost, updatePost } from "../../api/posts.api";
 
 const style = {
@@ -15,6 +21,9 @@ const style = {
   border: "2px solid #000",
   boxShadow: 24,
   p: 4,
+  maxHeight: "80vh",
+  overflowY: "auto",
+  scrollbarWidth: "thin",
 };
 export default function EditPostsDialog({
   open,
@@ -23,6 +32,7 @@ export default function EditPostsDialog({
   post,
 }) {
   const [formData, setFormData] = useState({
+    image: post.image ? post.image : "/assets/preview-image.jpg",
     title: post.title,
     body: post.body,
   });
@@ -34,8 +44,14 @@ export default function EditPostsDialog({
   };
 
   useEffect(() => {
-    setFormData({ title: post.title, body: post.body });
+    setFormData({
+      image: post.image ? post.image : "/assets/preview-image.jpg",
+      title: post.title,
+      body: post.body,
+    });
   }, [post]);
+
+  console.log(formData);
 
   return (
     <Modal
@@ -73,6 +89,61 @@ export default function EditPostsDialog({
                 setFormData((prev) => ({ ...prev, body: e.target.value }))
               }
             />
+
+            <FormControl
+              component="fieldset"
+              sx={{ border: "1px solid #ccc", p: 2, borderRadius: 1 }}
+            >
+              <FormLabel
+                component="legend"
+                sx={{ fontSize: "15px", mb: 1, color: "#757474" }}
+              >
+                Image
+              </FormLabel>
+              <Stack
+                spacing={2}
+                sx={{ textAlign: "center", alignItems: "center" }}
+              >
+                <Box
+                  className=""
+                  sx={{
+                    width: 200,
+                    height: 150,
+                    backgroundImage: `url(${
+                      formData.image
+                        ? formData.image
+                        : "/assets/preview-image.jpg"
+                    })`,
+                    backgroundSize: "contain",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                    border: "1px solid #ddd",
+                    borderRadius: "8px",
+                  }}
+                ></Box>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      image: URL.createObjectURL(e.target.files[0]),
+                    }))
+                  }
+                  className="w-[75%]"
+                />
+                <Typography>OR</Typography>
+                <TextField
+                  id="outlined-basic"
+                  label="Enter post image url"
+                  variant="outlined"
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, image: e.target.value }))
+                  }
+                />
+              </Stack>
+            </FormControl>
+
             <Button variant="contained" onClick={handleSubmit}>
               Update Post
             </Button>
