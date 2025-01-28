@@ -41,7 +41,21 @@ export default function AddPostsDialog({
     handleClose();
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
 
+      reader.onloadend = () => {
+        setFormData((prevData) => ({
+          ...prevData,
+          image: reader.result, // Save the image as a data URL
+        }));
+      };
+
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <Modal
@@ -112,12 +126,7 @@ export default function AddPostsDialog({
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      image: URL.createObjectURL(e.target.files[0]),
-                    }))
-                  }
+                  onChange={handleImageChange}
                   className="w-[75%]"
                 />
                 <Typography>OR</Typography>

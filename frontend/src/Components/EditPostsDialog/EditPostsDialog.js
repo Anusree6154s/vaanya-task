@@ -43,6 +43,22 @@ export default function EditPostsDialog({
     handleClose();
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        setFormData((prevData) => ({
+          ...prevData,
+          image: reader.result, // Save the image as a data URL
+        }));
+      };
+
+      reader.readAsDataURL(file);
+    }
+  };
+
   useEffect(() => {
     setFormData({
       image: post.image ? post.image : "/assets/preview-image.jpg",
@@ -124,12 +140,7 @@ export default function EditPostsDialog({
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      image: URL.createObjectURL(e.target.files[0]),
-                    }))
-                  }
+                  onChange={handleImageChange}
                   className="w-[75%]"
                 />
                 <Typography>OR</Typography>
