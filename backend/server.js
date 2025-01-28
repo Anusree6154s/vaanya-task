@@ -10,7 +10,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
-      "https://vaanya-task-backend.onrender.com",
+      "https://vaanya-task-frontend.vercel.app",
     ],
   })
 );
